@@ -1,0 +1,16 @@
+# Archivos de Python compilados
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Entornos virtuales (si usas virtualenv o venv)
+venv/
+.env/
+
+# Configuración de IDEs
+.vscode/
+.idea/
+
+# Archivos de dependencias
+*.log
