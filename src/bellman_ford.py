@@ -3,7 +3,6 @@ def bellman_ford(graph, start):
     distances[start] = 0
     previous_nodes = {node: None for node in graph}
 
-    # Relajación de las aristas |V| - 1 veces
     for _ in range(len(graph) - 1):
         for node in graph:
             for neighbor, weight in graph[node]:

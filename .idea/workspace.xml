@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="53847e21-b275-46c6-820d-df4c5baff7e9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/bellman_ford.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/comparar_algoritmos.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/gui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/comparar_algoritmos.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/comparar_algoritmos.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dijkstra.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/dijkstra.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/grafo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

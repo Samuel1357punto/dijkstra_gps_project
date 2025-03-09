@@ -1,44 +1,43 @@
 import time
 import random
-from graph import Graph
+from grafo import Grafo
 from dijkstra import dijkstra
 from bellman_ford import bellman_ford
 
-def generate_large_graph(num_nodes, num_edges):
-    graph = Graph()
-    nodes = [str(i) for i in range(num_nodes)]
+def generar_grafo_grande(num_nodos, num_aristas):
+    grafo = Grafo()
+    nodos = [str(i) for i in range(num_nodos)]
 
-    for node in nodes:
-        graph.add_node(node)
+    for nodo in nodos:
+        grafo.agregar_nodo(nodo)
 
-    for _ in range(num_edges):
-        node1, node2 = random.sample(nodes, 2)
-        weight = random.randint(1, 100)
-        graph.add_edge(node1, node2, weight)
+    for _ in range(num_aristas):
+        nodo1, nodo2 = random.sample(nodos, 2)
+        peso = random.randint(1, 100)
+        grafo.agregar_arista(nodo1, nodo2, peso)
 
-    return graph
+    return grafo
 
-def compare_algorithms(num_nodes=1500, num_edges=5500):
-    graph = generate_large_graph(num_nodes, num_edges)
+def comparar_algoritmos(num_nodos=1500, num_aristas=5500):
+    grafo = generar_grafo_grande(num_nodos, num_aristas)
 
-    start_node = "0"
+    nodo_inicio = "0"
 
     # Medir tiempo de Dijkstra
-    start_time = time.time()
-    dijkstra(graph.graph, start_node)
-    dijkstra_time = time.time() - start_time
+    tiempo_inicio = time.time()
+    dijkstra(grafo.grafo, nodo_inicio)
+    tiempo_dijkstra = time.time() - tiempo_inicio
 
     # Medir tiempo de Bellman-Ford
-    start_time = time.time()
+    tiempo_inicio = time.time()
     try:
-        bellman_ford(graph.graph, start_node)
-        bellman_ford_time = time.time() - start_time
+        bellman_ford(grafo.grafo, nodo_inicio)
+        tiempo_bellman_ford = time.time() - tiempo_inicio
     except ValueError:
-        bellman_ford_time = "Ciclo negativo detectado"
+        tiempo_bellman_ford = "Ciclo negativo detectado"
 
-    print(f"Dijkstra: {dijkstra_time:.5f} segundos")
-    print(f"Bellman-Ford: {bellman_ford_time:.5f} segundos" if isinstance(bellman_ford_time, float) else bellman_ford_time)
-
+    print(f"Dijkstra: {tiempo_dijkstra:.5f} segundos")
+    print(f"Bellman-Ford: {tiempo_bellman_ford:.5f} segundos" if isinstance(tiempo_bellman_ford, float) else tiempo_bellman_ford)
 
 if __name__ == "__main__":
-    compare_algorithms()
+    comparar_algoritmos()

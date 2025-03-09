@@ -1,31 +1,32 @@
 import heapq
 
-def dijkstra(graph, start):
-    distances = {node: float('inf') for node in graph}
-    distances[start] = 0
-    priority_queue = [(0, start)]
-    previous_nodes = {node: None for node in graph}
+def dijkstra(grafo, inicio):
+    distancias = {nodo: float('inf') for nodo in grafo}
+    distancias[inicio] = 0
+    cola_prioridad = [(0, inicio)]
+    nodos_previos = {nodo: None for nodo in grafo}
 
-    while priority_queue:
-        current_distance, current_node = heapq.heappop(priority_queue)
+    while cola_prioridad:
+        distancia_actual, nodo_actual = heapq.heappop(cola_prioridad)
 
-        if current_distance > distances[current_node]:
+        if distancia_actual > distancias[nodo_actual]:
             continue
 
-        for neighbor, weight in graph[current_node]:
-            distance = current_distance + weight
+        for vecino, peso in grafo[nodo_actual]:
+            nueva_distancia = distancia_actual + peso
 
-            if distance < distances[neighbor]:
-                distances[neighbor] = distance
-                previous_nodes[neighbor] = current_node
-                heapq.heappush(priority_queue, (distance, neighbor))
+            if nueva_distancia < distancias[vecino]:
+                distancias[vecino] = nueva_distancia
+                nodos_previos[vecino] = nodo_actual
+                heapq.heappush(cola_prioridad, (nueva_distancia, vecino))
 
-    return distances, previous_nodes
+    return distancias, nodos_previos
 
-def shortest_path(previous_nodes, start, target):
-    path = []
-    current = target
-    while current is not None:
-        path.append(current)
-        current = previous_nodes[current]
-    return path[::-1] if path[-1] == start else []
+def camino_mas_corto(nodos_previos, inicio, destino):
+    camino = []
+    actual = destino
+    while actual is not None:
+        camino.append(actual)
+        actual = nodos_previos[actual]
+    return camino[::-1] if camino[-1] == inicio else []
+
