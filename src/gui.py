@@ -3,13 +3,16 @@ from tkinter import messagebox
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import time
 from grafo import Grafo
 from dijkstra import dijkstra, camino_mas_corto
+from bellman_ford import bellman_ford
+import random
 
 class InterfazDijkstra:
     def __init__(self, raiz):
         self.raiz = raiz
-        self.raiz.title("Algoritmo de Dijkstra - GPS")
+        self.raiz.title("Comparación de Algoritmos de Rutas")
 
         self.grafo = Grafo()
         self.G = nx.Graph()
@@ -46,6 +49,9 @@ class InterfazDijkstra:
 
         self.boton_ejecutar = tk.Button(marco, text="Ejecutar Dijkstra", command=self.ejecutar_dijkstra)
         self.boton_ejecutar.grid(row=6, columnspan=2)
+
+        self.boton_comparar = tk.Button(marco, text="Comparar Algoritmos", command=self.comparar_algoritmos)
+        self.boton_comparar.grid(row=7, columnspan=2)
 
         self.marco_canvas = tk.Frame(self.raiz)
         self.marco_canvas.pack()
@@ -111,8 +117,36 @@ class InterfazDijkstra:
         self.canvas.draw()
         self.canvas.get_tk_widget().pack()
 
+    def comparar_algoritmos(self):
+        num_nodos = 1000
+        num_aristas = 3000
+        grafo = Grafo()
+        nodos = [str(i) for i in range(num_nodos)]
+
+        for nodo in nodos:
+            grafo.agregar_nodo(nodo)
+
+        for _ in range(num_aristas):
+            nodo1, nodo2 = random.sample(nodos, 2)
+            peso = random.randint(1, 100)
+            grafo.agregar_arista(nodo1, nodo2, peso)
+
+        nodo_inicio = "0"
+
+        tiempo_inicio = time.time()
+        dijkstra(grafo.grafo, nodo_inicio)
+        tiempo_dijkstra = time.time() - tiempo_inicio
+
+        tiempo_inicio = time.time()
+        try:
+            bellman_ford(grafo.grafo, nodo_inicio)
+            tiempo_bellman_ford = time.time() - tiempo_inicio
+        except ValueError:
+            tiempo_bellman_ford = "Ciclo negativo detectado"
+
+        messagebox.showinfo("Comparación de Algoritmos", f"Dijkstra: {tiempo_dijkstra:.5f} segundos\nBellman-Ford: {tiempo_bellman_ford:.5f} segundos")
+
 if __name__ == "__main__":
     raiz = tk.Tk()
     app = InterfazDijkstra(raiz)
     raiz.mainloop()
-

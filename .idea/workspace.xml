@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="53847e21-b275-46c6-820d-df4c5baff7e9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/comparar_algoritmos.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/comparar_algoritmos.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dijkstra.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/dijkstra.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/grafo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -41,7 +38,7 @@
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Sam/PycharmProjects/dijkstraVSbellmanford/src/gui.py&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.comparar_algoritmos">
+  <component name="RunManager" selected="Python.gui">
     <configuration name="comparar_algoritmos" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="dijkstraVSbellmanford" />
       <option name="INTERPRETER_OPTIONS" value="" />
