@@ -3,11 +3,11 @@ import heapq
 class Grafo:
     def __init__(self):
         self.grafo = {
-            "A": [("B", 4), ("C", 2)],
+            """A": [("B", 4), ("C", 2)],
             "B": [("A", 4), ("C", 5), ("D", 10)],
             "C": [("A", 2), ("B", 5), ("D", 3), ("E", 7)],
             "D": [("B", 10), ("C", 3), ("E", 8)],
-            "E": [("C", 7), ("D", 8)]
+            "E": [("C", 7), ("D", 8)]"""
         }
 
     def agregar_nodo(self, nodo):
