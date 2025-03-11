@@ -4,149 +4,143 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import time
-from grafo import Grafo
-from dijkstra import dijkstra, camino_mas_corto
-from bellman_ford import bellman_ford
 import random
+from dijkstra import dijkstra, camino_mas_corto
+from bellman_ford import bellman_ford, shortest_path
 
-class InterfazDijkstra:
+
+def obtener_mapa_ciudad_victoria():
+    grafo = {}
+
+    #Creación de nodos
+    #"nodo": (ubicacionX, ubicacionY)
+    nodos = {
+        "Centro": (0, 0), "UAT": (2, 3), "Estadio": (5, 4), "Hospital": (-3, 2),
+        "Aeropuerto": (8, -2), "Terminal": (4, -3), "Plaza": (1, -4),
+        "Puente de Tamatán": (6, -3), "Monumento Niños Héroes": (3, 2.5), "Catedral": (-1, -2)
+    }
+
+    #Creación de aristas
+    #"nodo1", "nodo2", ponderacion
+    aristas = [
+        ("Centro", "UAT", 3), ("Centro", "Estadio", 5), ("Centro", "Hospital", 4),
+        ("Centro", "Terminal", 4.5), ("UAT", "Estadio", 2.5), ("Terminal", "Aeropuerto", 4.3),
+        ("Terminal", "Plaza", 2), ("Plaza", "Puente de Tamatán", 5), ("Hospital", "Catedral", 3.5),
+        ("UAT", "Monumento Niños Héroes", 3), ("Monumento Niños Héroes", "Catedral", 2),
+        ("Estadio", "Aeropuerto", 6), ("Puente de Tamatán", "Aeropuerto", 3)
+    ]
+
+    for nodo in nodos:
+        grafo[nodo] = []
+    for nodo1, nodo2, peso in aristas:
+        grafo[nodo1].append((nodo2, peso))
+        grafo[nodo2].append((nodo1, peso))
+
+    return grafo, nodos
+
+
+class InterfazMapa:
     def __init__(self, raiz):
         self.raiz = raiz
-        self.raiz.title("Comparación de Algoritmos de Rutas")
-
-        self.grafo = Grafo()
-        self.G = nx.Graph()
-        self.cargar_grafo_predefinido()
-
+        self.raiz.title("Mapa de Ciudad Victoria - Intersecciones y Calles")
+        self.G, self.pos = obtener_mapa_ciudad_victoria()
         self.crear_interfaz()
 
     def crear_interfaz(self):
         marco = tk.Frame(self.raiz)
         marco.pack()
 
-        tk.Label(marco, text="Nodo 1:").grid(row=0, column=0)
-        self.entrada_nodo1 = tk.Entry(marco)
-        self.entrada_nodo1.grid(row=0, column=1)
-
-        tk.Label(marco, text="Nodo 2:").grid(row=1, column=0)
-        self.entrada_nodo2 = tk.Entry(marco)
-        self.entrada_nodo2.grid(row=1, column=1)
-
-        tk.Label(marco, text="Peso:").grid(row=2, column=0)
-        self.entrada_peso = tk.Entry(marco)
-        self.entrada_peso.grid(row=2, column=1)
-
-        self.boton_agregar_arista = tk.Button(marco, text="Agregar Arista", command=self.agregar_arista)
-        self.boton_agregar_arista.grid(row=3, columnspan=2)
-
-        tk.Label(marco, text="Origen:").grid(row=4, column=0)
+        tk.Label(marco, text="Origen:").grid(row=0, column=0)
         self.entrada_origen = tk.Entry(marco)
-        self.entrada_origen.grid(row=4, column=1)
+        self.entrada_origen.grid(row=0, column=1)
 
-        tk.Label(marco, text="Destino:").grid(row=5, column=0)
+        tk.Label(marco, text="Destino:").grid(row=1, column=0)
         self.entrada_destino = tk.Entry(marco)
-        self.entrada_destino.grid(row=5, column=1)
+        self.entrada_destino.grid(row=1, column=1)
 
-        self.boton_ejecutar = tk.Button(marco, text="Ejecutar Dijkstra", command=self.ejecutar_dijkstra)
-        self.boton_ejecutar.grid(row=6, columnspan=2)
-
-        self.boton_comparar = tk.Button(marco, text="Comparar Algoritmos", command=self.comparar_algoritmos)
-        self.boton_comparar.grid(row=7, columnspan=2)
+        tk.Button(marco, text="Ejecutar Dijkstra", command=self.ejecutar_dijkstra).grid(row=2, column=0)
+        tk.Button(marco, text="Comparar Algoritmos", command=self.comparar_algoritmos).grid(row=2, column=1)
+        self.resultado_tiempo = tk.Label(marco, text="")
+        self.resultado_tiempo.grid(row=3, columnspan=2)
 
         self.marco_canvas = tk.Frame(self.raiz)
         self.marco_canvas.pack()
-
-        self.dibujar_grafo()
-
-    def agregar_arista(self):
-        nodo1 = self.entrada_nodo1.get()
-        nodo2 = self.entrada_nodo2.get()
-        peso = self.entrada_peso.get()
-
-        if not (nodo1 and nodo2 and peso.isdigit()):
-            messagebox.showerror("Error", "Ingrese valores válidos")
-            return
-
-        peso = int(peso)
-        self.grafo.agregar_arista(nodo1, nodo2, peso)
-        self.G.add_edge(nodo1, nodo2, weight=peso)
-        self.dibujar_grafo()
-
-    def cargar_grafo_predefinido(self):
-        for nodo, aristas in self.grafo.grafo.items():
-            for vecino, peso in aristas:
-                self.G.add_edge(nodo, vecino, weight=peso)
+        self.dibujar_mapa()
 
     def ejecutar_dijkstra(self):
-        origen = self.entrada_origen.get()
-        destino = self.entrada_destino.get()
-
-        if origen not in self.grafo.grafo or destino not in self.grafo.grafo:
-            messagebox.showerror("Error", "Los nodos ingresados no existen en el grafo")
-            return
-
-        distancias, nodos_previos = dijkstra(self.grafo.grafo, origen)
-        camino = camino_mas_corto(nodos_previos, origen, destino)
-
-        if not camino:
-            messagebox.showerror("Error", "No existe un camino entre los nodos seleccionados")
-            return
-
-        self.dibujar_grafo(camino)
-
-    def dibujar_grafo(self, camino=None):
-        plt.clf()
-        pos = nx.spring_layout(self.G)
-        etiquetas = nx.get_edge_attributes(self.G, "weight")
-
-        nx.draw(self.G, pos, with_labels=True, node_color='lightblue', edge_color='gray', node_size=2000, font_size=10)
-        nx.draw_networkx_edge_labels(self.G, pos, edge_labels=etiquetas)
-
-        if camino:
-            aristas_camino = list(zip(camino, camino[1:]))
-            nx.draw_networkx_nodes(self.G, pos, nodelist=camino, node_color='red')
-            nx.draw_networkx_edges(self.G, pos, edgelist=aristas_camino, edge_color='red', width=2)
-
-        fig = plt.gcf()
-        fig.set_size_inches(5, 5)
-
-        if hasattr(self, 'canvas'):
-            self.canvas.get_tk_widget().destroy()
-
-        self.canvas = FigureCanvasTkAgg(fig, master=self.marco_canvas)
-        self.canvas.draw()
-        self.canvas.get_tk_widget().pack()
+        self.calcular_ruta(dijkstra, camino_mas_corto, "Dijkstra")
 
     def comparar_algoritmos(self):
-        num_nodos = 1000
-        num_aristas = 3000
-        grafo = Grafo()
-        nodos = [str(i) for i in range(num_nodos)]
-
-        for nodo in nodos:
-            grafo.agregar_nodo(nodo)
+        num_nodos = 500
+        num_aristas = 1500
+        grafo = {str(i): [] for i in range(num_nodos)}
+        nodos = list(grafo.keys())
 
         for _ in range(num_aristas):
             nodo1, nodo2 = random.sample(nodos, 2)
             peso = random.randint(1, 100)
-            grafo.agregar_arista(nodo1, nodo2, peso)
+            grafo[nodo1].append((nodo2, peso))
+            grafo[nodo2].append((nodo1, peso))
 
-        nodo_inicio = "0"
+        nodo_inicio, nodo_fin = "0", str(num_nodos - 1)
 
-        tiempo_inicio = time.time()
-        dijkstra(grafo.grafo, nodo_inicio)
-        tiempo_dijkstra = time.time() - tiempo_inicio
-
-        tiempo_inicio = time.time()
+        inicio = time.time()
         try:
-            bellman_ford(grafo.grafo, nodo_inicio)
-            tiempo_bellman_ford = time.time() - tiempo_inicio
-        except ValueError:
-            tiempo_bellman_ford = "Ciclo negativo detectado"
+            dijkstra(grafo, nodo_inicio)
+            tiempo_dijkstra = (time.time() - inicio) * 1000
+        except:
+            tiempo_dijkstra = "Error"
 
-        messagebox.showinfo("Comparación de Algoritmos", f"Dijkstra: {tiempo_dijkstra:.5f} segundos\nBellman-Ford: {tiempo_bellman_ford:.5f} segundos")
+        inicio = time.time()
+        try:
+            bellman_ford(grafo, nodo_inicio)
+            tiempo_bellman_ford = (time.time() - inicio) * 1000
+        except:
+            tiempo_bellman_ford = "Error"
+
+        messagebox.showinfo("Comparación de Algoritmos",
+                            f"Dijkstra: {tiempo_dijkstra:.2f} ms\nBellman-Ford: {tiempo_bellman_ford:.2f} ms")
+
+    def calcular_ruta(self, algoritmo, obtener_camino, nombre):
+        origen, destino = self.entrada_origen.get().strip(), self.entrada_destino.get().strip()
+        if origen not in self.G or destino not in self.G:
+            messagebox.showerror("Error", "Nodos inválidos")
+            return
+
+        inicio = time.time()
+        distancias, previos = algoritmo(self.G, origen)
+        camino = obtener_camino(previos, origen, destino)
+        tiempo_total = (time.time() - inicio) * 1000
+        self.resultado_tiempo.config(text=f"{nombre} tomó {tiempo_total:.2f} ms")
+        self.dibujar_mapa(camino)
+
+    def dibujar_mapa(self, camino=None):
+        plt.figure(figsize=(12, 8))
+        plt.clf()
+        G_nx = nx.Graph()
+        for nodo, vecinos in self.G.items():
+            G_nx.add_node(nodo, pos=self.pos[nodo])
+            for vecino, peso in vecinos:
+                G_nx.add_edge(nodo, vecino, weight=peso)
+
+        nx.draw(G_nx, nx.get_node_attributes(G_nx, 'pos'), with_labels=True, node_color='lightblue')
+        labels = nx.get_edge_attributes(G_nx, 'weight')
+        nx.draw_networkx_edge_labels(G_nx, nx.get_node_attributes(G_nx, 'pos'), edge_labels=labels)
+
+        if camino:
+            nx.draw_networkx_nodes(G_nx, nx.get_node_attributes(G_nx, 'pos'), nodelist=camino, node_color='red')
+
+        if hasattr(self, 'canvas'):
+            self.canvas.get_tk_widget().destroy()
+        self.canvas = FigureCanvasTkAgg(plt.gcf(), master=self.marco_canvas)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack()
+
 
 if __name__ == "__main__":
     raiz = tk.Tk()
-    app = InterfazDijkstra(raiz)
+    InterfazMapa(raiz)
     raiz.mainloop()
+
+
+# Ahora el grafo se ve más grande con figsize ajustado a 12x8. 🚀
